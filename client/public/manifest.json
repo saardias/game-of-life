@@ -1,0 +1,9 @@
+{
+  "short_name": "Game of life",
+  "name": "Game of life",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
