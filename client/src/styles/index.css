@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Nova+Flat&display=swap');
+
+html {
+  height: 100%;
+}
+
+
+html>* {
+  font-family: 'Nova Flat', cursive;
+}
+
+body {
+  overflow: auto;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100%;
+}
+
+:root {
+  --background-dark: #171717;
+  --background-light: #F6F6F6;
+  --neutral-50p: #000000;
+  --neutral-40p: #8F8F8F;
+  --neutral-30p: #E0E0E0;
+  --neutral-20p: #F2F2F4;
+  --neutral-10p: #FEFEFE;
+  --neutral-50p-dark: #EFE2DA;
+  --orange: #FD9C16;
+  --orange-shade: #fab24d;
+  --red: #D32F2F;
+  --red-shade: #ef5350;
+  --orange: #ed6c02;
+  --orange-shade: #ff9800;
+  --blue: #0288d1;
+  --blue-shade: #03a9f4;
+  --green: #2e7d32;
+  --green-shade: #4caf50;
+}
