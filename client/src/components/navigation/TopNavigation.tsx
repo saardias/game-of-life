@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 
 import Routes from '../../routes';
 import { Typography } from '../ui/Typography';
-import Nav from './StyledComponents';
+import Nav from './NavigationComponents';
 
 const TopNavigation = (props: any) => {
 

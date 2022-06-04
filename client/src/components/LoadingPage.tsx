@@ -8,7 +8,7 @@ const LoadingPage = () => {
 
     return (
         <FlexColumnCentered style={{ height: '100%' }}>
-            <Spinner size={'25%'} />
+            <Spinner />
         </FlexColumnCentered>
     )
 }

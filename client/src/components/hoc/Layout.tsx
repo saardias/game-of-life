@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { IParent } from '../../interfaces/common/base';
-import { TopNavFullHeight } from '../navigation/StyledComponents';
+import { TopNavFullHeight } from '../navigation/NavigationComponents';
 import TopNavigation from '../navigation/TopNavigation';
 
 const LayoutContainer = styled.div`

@@ -1,21 +1,19 @@
 import React, { createContext, useState } from 'react';
-import gameApi from '../api/game-api';
 import { IError, IParent } from '../interfaces/common/base';
+import { IDimensions } from '../interfaces/models/game';
 
-type ModeType = 'init' | 'readyToSet' | 'readyToStart' | 'running';
-export interface IDimensions {
-    row: number,
-    columns: number
-}
+type ModeType = 'init' | 'ready' | 'running';
 
 interface IGameContext {
     dimenstions?: IDimensions;
     mode?: ModeType;
+    afterFirstStep?: boolean
     actions?: {
         setDimensions: (data: IDimensions) => void;
         setMode: (mode: ModeType) => void;
         setError: (error: IError | null) => void;
-        resetGame: () => void
+        resetGame: () => void;
+        setAfterFirstStep: (data: boolean) => void
     },
     error?: IError | null
 }
@@ -26,11 +24,12 @@ GameContext.displayName = 'GameManagement';
 const GameProvider = ({ children }: IParent) => {
     const [dimenstions, setDimensions] = useState<IDimensions>({ row: 0, columns: 0 });
     const [mode, setMode] = useState<ModeType>('init');
-    const [error, setError] = useState<IError | null>(null)
+    const [afterFirstStep, setAfterFirstStep] = useState<boolean>(false);
+    const [error, setError] = useState<IError | null>(null);
 
     const resetGame = () => {
         setDimensions({ row: 0, columns: 0 });
-        setMode('readyToSet');
+        setMode('ready');
     }
 
     return (
@@ -39,11 +38,13 @@ const GameProvider = ({ children }: IParent) => {
                 dimenstions,
                 mode,
                 error,
+                afterFirstStep,
                 actions: {
                     setDimensions,
                     setMode,
                     setError,
-                    resetGame
+                    resetGame,
+                    setAfterFirstStep
                 }
             }}>
             {children}

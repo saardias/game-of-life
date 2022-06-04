@@ -32,9 +32,8 @@ function App() {
 
     const initGame = useCallback(() => {
         api.game?.initGame().then(({ payload }) => {
-            console.log('payload', payload);
             gameManagment.actions?.setDimensions(payload);
-            gameManagment.actions?.setMode('readyToSet');
+            gameManagment.actions?.setMode('ready');
         }).catch((err) => {
             gameManagment.actions?.setError(err);
         });
@@ -66,7 +65,7 @@ function App() {
         )
     }
 
-    if (gameManagment.mode === 'readyToSet' || gameManagment.mode === 'running') {
+    if (gameManagment.mode === 'ready' || gameManagment.mode === 'running') {
         view = (
             <CellProvider>
                 <Router>

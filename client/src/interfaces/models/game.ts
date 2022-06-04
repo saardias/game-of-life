@@ -1,9 +1,7 @@
-
-export interface ILocation {
-    x: number;
-    y: number;
+export interface IDimensions {
+    row: number,
+    columns: number
 }
-
-export interface ICell extends ILocation {
-    state: 'dead' | 'alive'
-}
+export interface IGameBoardProps {
+    dimenstions: IDimensions;
+};

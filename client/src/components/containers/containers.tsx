@@ -6,26 +6,6 @@ export const FlexRow = styled.div`
     flex-direction: row;
 `;
 
-export const FlexRowAligned = styled.div`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-`;
-
-export const FlexRowSpaced = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: 'center';
-`;
-
-export const FlexRowCentered = styled.div`
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-`;
-
 export const FlexRowWrapped = styled.div`
     display: flex;
     flex-direction: row;
@@ -43,7 +23,3 @@ export const FlexColumnCentered = styled.div`
     justify-content: center;
     align-items: center;
 `;
-
-export const RelativeContainer = styled.div`
-    position: relative;
-`

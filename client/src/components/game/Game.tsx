@@ -1,118 +1,142 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import styled from 'styled-components';
 import { ApiContext } from '../../context/ApiProvider';
-import CellProvider, { CellContext } from '../../context/CellProvider';
-import { GameContext, IDimensions } from '../../context/GameProvider';
-import theme from '../../theme/theme';
-import { getId } from '../../utils/utils';
+import { CellContext } from '../../context/CellProvider';
+import { GameContext } from '../../context/GameProvider';
+import { IError } from '../../interfaces/common/base';
 import { FlexColumnCentered, FlexRowWrapped } from '../containers/containers';
 import { Button } from '../ui/Buttons';
-import { CellBox } from './Cell';
-
-interface IGameBoardProps {
-    dimenstions: IDimensions;
-};
-
-const Grid = styled.div((props: { numCols: number }) => {
-    return `
-        display: grid;
-        grid-template-columns: repeat(${props.numCols}, 20px);
-        width: fit-content;
-        margin: 0 auto;
-    `
-})
-
-const GameBoard = (props: IGameBoardProps) => {
-    const cellContext = useContext(CellContext);
-
-
-
-    const onClick = useCallback((x: number, y: number) => {
-        const listUpdate = { ...cellContext.livingCellsList } || {};
-        const cellKey = `${x}-${y}`
-        if (listUpdate[cellKey]) {
-            delete listUpdate[cellKey];
-        } else {
-            listUpdate[cellKey] = true;
-        }
-        cellContext.actions?.setLivingCellList(listUpdate);
-    }, [cellContext.livingCellsList])
-
-    const rows = [];
-    for (let i = 0; i < props.dimenstions.row; i++) {
-        for (let j = 0; j < props.dimenstions.columns; j++) {
-            rows.push(
-                <CellBox
-                    style={{
-                        backgroundColor: cellContext?.livingCellsList && cellContext?.livingCellsList[`${i}-${j}`] ? theme.palette.primary.light : theme.palette.background.dark,
-                    }}
-                    onClick={() => { onClick(i, j) }}
-                    key={`${i},${j}`} />
-            )
-        }
-    };
-
-    return (
-        <Grid numCols={props.dimenstions.columns}>
-            {rows}
-        </Grid>
-    )
-}
+import { Typography } from '../ui/Typography';
+import GameBoard from './GameBoard';
 
 
 const Game = () => {
     const api = useContext(ApiContext);
     const gameManagement = useContext(GameContext);
     const cells = useContext(CellContext);
+    const [setps, setSteps] = useState(0);
+    const [error, setError] = useState<IError | null>(null);
 
     useEffect(() => {
         if (gameManagement.mode === 'running') {
             const interval = setInterval(() => {
-                if (cells.livingCellsList) {
-                    api.game?.nextStage(cells.livingCellsList).then(({ payload }) => {
-                        cells.actions?.setLivingCellList(payload.livingCells)
-                    });
+                if (gameManagement.afterFirstStep) {
+                    if (cells.livingCellsList) {
+                        onNext();
+                    }
+                } else {
+                    doFirstStep();
                 }
             }, 300);
-
             return () => clearInterval(interval);
         }
-    }, [api.game, cells.actions, cells.livingCellsList, gameManagement.mode]);
+    }, [api.game, cells.actions, cells.livingCellsList, gameManagement.actions, gameManagement.afterFirstStep, gameManagement.mode]);
 
-    const onNextStart = useCallback(() => {
+    useEffect(() => {
+        if (gameManagement.mode === 'running' && cells.livingCellsList && !Object.keys(cells.livingCellsList).length) {
+            onAllDeadCells();
+        }
+    }, [cells.livingCellsList, gameManagement.actions, gameManagement.mode])
+
+    const onNextClicked = () => {
+        if (gameManagement.afterFirstStep) {
+            onNext();
+        } else {
+            doFirstStep();
+        }
+    };
+
+    const onNext = useCallback(() => {
         if (cells.livingCellsList) {
-            api.game?.nextStage(cells.livingCellsList).then(({ payload }) => {
-                cells.actions?.setLivingCellList(payload.livingCells)
+            api.game?.nextStage().then(({ payload }) => {
+                cells.actions?.setLivingCellList(payload.livingCells);
+                setSteps(payload.steps);
+                if (!Object.keys(payload.livingCells).length) {
+                    onAllDeadCells();
+                }
+            }).catch((err) => {
+                setError(err);
             });
         }
-    }, [api.game, cells.actions, cells.livingCellsList])
+    }, [api.game, cells.actions, cells.livingCellsList, gameManagement.actions]);
 
-    const onResetClicked = () => {
-        gameManagement.actions?.setMode('readyToSet')
-        cells.actions?.setLivingCellList({})
+    const doFirstStep = useCallback(() => {
+        if (cells.livingCellsList) {
+            api.game?.firstStage(cells.livingCellsList).then(({ payload }) => {
+                cells.actions?.setLivingCellList(payload.livingCells);
+                setSteps(payload.steps);
+                gameManagement.actions?.setAfterFirstStep(true);
+                if (!Object.keys(payload.livingCells).length) {
+                    onAllDeadCells();
+                }
+            }).catch((err) => {
+                setError(err);
+            });
+        }
+    }, [api.game, cells.actions, cells.livingCellsList, gameManagement.actions]);
+
+
+    const onReset = () => {
+        api.game?.resetGame().then(({ payload }) => {
+            if (payload.ok) {
+                cells.actions?.setLivingCellList({});
+                gameManagement.actions?.setAfterFirstStep(false);
+                setSteps(0);
+            }
+        }).catch((err) => {
+            setError(err);
+        }).finally(() => {
+            gameManagement.actions?.setMode('ready');
+        });
+
     }
 
-    const onStart = () => {
-        gameManagement.actions?.setMode('running');
+    const onStartStopClicked = () => {
+        if (error) {
+            setError(null);
+        }
+        if (gameManagement.mode === 'running') {
+            gameManagement.actions?.setMode('ready');
+        } else {
+            gameManagement.actions?.setMode('running');
+        }
     };
+
+    const onAllDeadCells = () => {
+        onReset();
+        alert('All life is dead');
+    }
 
 
     return (
-        <FlexColumnCentered>
+        <FlexColumnCentered style={{ height: '100%', justifyContent: 'space-around' }}>
             <GameBoard dimenstions={gameManagement.dimenstions || { row: 0, columns: 0 }} />
-            <FlexRowWrapped>
+            <Typography varient='h3'>
+                {`Steps - ${setps || 0}`}
+            </Typography>
+            {
+                error ?
+                    <Typography color='error' varient='subtitle1'>
+                        Something went wrong. Please try again.
+                    </Typography>
+                    : null
+            }
+            <FlexRowWrapped style={{ justifyContent: 'center' }}>
                 <Button
-                    onClick={onStart}
+                    style={{ width: '25%' }}
+                    onClick={onStartStopClicked}
                     disabled={cells.livingCellsList && Object.keys(cells.livingCellsList).length === 0}>
-                    Start
+                    {gameManagement.mode === 'running' ? 'Stop' : 'Start'}
                 </Button>
                 <Button
-                    onClick={onNextStart}
+                    style={{ width: '25%' }}
+                    onClick={onNextClicked}
                     disabled={cells.livingCellsList && Object.keys(cells.livingCellsList).length === 0}>
                     Next
                 </Button>
                 <Button
-                    onClick={onResetClicked}>
+                    disabled={gameManagement.mode === 'running'}
+                    style={{ width: '25%' }}
+                    onClick={onReset}>
                     Reset
                 </Button>
             </FlexRowWrapped>

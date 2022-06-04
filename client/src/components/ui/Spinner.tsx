@@ -1,19 +1,15 @@
-import React, { CSSProperties } from 'react';
-import { SpinnerCircular } from 'spinners-react';
-import { useTheme } from 'styled-components';
+import React from 'react';
+import { GridLoader } from 'react-spinners';
+import { ISpinnerProps } from '../../interfaces/components/ui';
 
-interface ISpinnerProps {
-    style?: CSSProperties,
-    size?: number | string,
-    loading?: boolean
-}
+import theme from '../../theme/theme';
+
 const Spinner = (props: ISpinnerProps) => {
-    const theme = useTheme()
     return (
-        <SpinnerCircular
-            enabled={props.loading}
+        <GridLoader
+            loading={props.loading}
             size={props.size || 50}
-            style={{ color: theme.palette.primary.main, ...props.style }} />
+            color={theme.palette.primary.light} />
     );
 }
 

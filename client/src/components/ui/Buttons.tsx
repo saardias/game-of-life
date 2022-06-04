@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { IButtonProps } from '../../interfaces/components/ui/buttons';
+import { IButtonProps } from '../../interfaces/components/ui';
 
 export const Button = styled.button<IButtonProps>`
     cursor: pointer;
