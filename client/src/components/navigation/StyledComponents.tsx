@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 import Theme from '../../theme/theme';
 
-export const TopNavHeight = 68;
-export const TopNavVeticalPadding = 13;
+export const TopNavHeight = 50;
+export const TopNavVeticalPadding = 10;
 export const TopNavFullHeight = TopNavHeight + (TopNavVeticalPadding * 2);
 
 const TopNav = styled.nav`
+	position: fixed;
 	top: 0;
 	left: 0;
 	right: 0;

@@ -4,6 +4,7 @@ import { useTheme } from 'styled-components';
 
 interface ISpinnerProps {
     style?: CSSProperties,
+    size?: number | string,
     loading?: boolean
 }
 const Spinner = (props: ISpinnerProps) => {
@@ -11,7 +12,7 @@ const Spinner = (props: ISpinnerProps) => {
     return (
         <SpinnerCircular
             enabled={props.loading}
-            size={50}
+            size={props.size || 50}
             style={{ color: theme.palette.primary.main, ...props.style }} />
     );
 }

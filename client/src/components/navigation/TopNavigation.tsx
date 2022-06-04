@@ -14,7 +14,7 @@ const TopNavigation = (props: any) => {
                 to={Routes.Game.home}>
                 <Typography
                     color='primary'
-                    varient='h2'>
+                    varient='h3'>
                     Game Of Life
                 </Typography>
             </NavLink>

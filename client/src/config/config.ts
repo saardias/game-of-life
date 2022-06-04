@@ -1,7 +1,7 @@
 
 const dev = {
     apiGateway: {
-        API_SERVER_URL: "ttp://localhost:8080"
+        API_SERVER_URL: "http://localhost:8080"
     }
 };
 
