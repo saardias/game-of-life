@@ -66,7 +66,7 @@ function App() {
         )
     }
 
-    if (gameManagment.mode === 'readyToSet') {
+    if (gameManagment.mode === 'readyToSet' || gameManagment.mode === 'running') {
         view = (
             <CellProvider>
                 <Router>
