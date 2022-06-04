@@ -8,6 +8,9 @@ const configurationObject = {
         serverVersion,
         env: 'dev',
         port: 8080,
+
+        numOfColumns: 50,
+        numOfRows: 50,
     }
 }
 
