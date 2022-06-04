@@ -10,15 +10,21 @@ interface ICell {
     y: number
 }
 
+interface ICellsMap {
+    [key: string]: boolean
+}
+
 class PrivateGameData {
     metadata: IGameMetadata;
-    livingCells: ICell[];
+    livingCells: ICellsMap;
+    steps: number
 
     constructor() {
         this.metadata = {
             numOfColumns: env.numOfColumns,
             numOfRows: env.numOfRows
         }
+        this.steps = 0;
     }
 
     getMetadata() {
@@ -30,7 +36,8 @@ class PrivateGameData {
     }
 
     reset() {
-        this.livingCells = [];
+        this.livingCells = {};
+        this.steps = 0;
     }
 
 }
@@ -44,7 +51,6 @@ class GameData {
         }
         return this.instance;
     }
-
 
 }
 

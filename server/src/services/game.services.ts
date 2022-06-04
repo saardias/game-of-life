@@ -60,10 +60,39 @@ const getCellNextStageStatus = (cell: { x: number, y: number }, livingCells: { [
 
 }
 
-export const getNextStage = async (livingCells: { [key: string]: boolean }) => {
+export const getFirstStage = async (livingCells: { [key: string]: boolean }) => {
+    console.log(`Service - Get fist stage`);
+    const game = GameData.getInstance();
+    const dimensions = game.getMetadata();
+    const currentLivingCells = Object.keys(livingCells).map((cell) => getLocation(cell));
+    const neighbors = currentLivingCells.map((cell) => getCellNeighbors(cell, dimensions.numOfRows, dimensions.numOfColumns))
+    let neighborsFlat = {};
+    for (const cells of neighbors) {
+        neighborsFlat = { ...neighborsFlat, ...cells }
+    }
+    const allCellsToCheck = { ...neighborsFlat, ...livingCells };
+    const livingCellsNextStage = {};
+    for (const cell in allCellsToCheck) {
+        if (getCellNextStageStatus(getLocation(cell), livingCells, dimensions.numOfRows, dimensions.numOfColumns)) {
+            livingCellsNextStage[cell] = true;
+        }
+    }
+
+    game.steps++;
+    game.livingCells = livingCellsNextStage;
+
+    return responseSuccess({
+        livingCells: livingCellsNextStage,
+        steps: game.steps
+    })
+}
+
+
+export const getNextStage = async () => {
     console.log(`Service - Get next stage`);
     const game = GameData.getInstance();
     const dimensions = game.getMetadata();
+    const livingCells = game.livingCells;
     const currentLivingCells = Object.keys(livingCells).map((cell) => getLocation(cell));
     const neighbors = currentLivingCells.map((cell) => getCellNeighbors(cell, dimensions.numOfRows, dimensions.numOfColumns))
     let neighborsFlat = {};
@@ -80,11 +109,21 @@ export const getNextStage = async (livingCells: { [key: string]: boolean }) => {
             livingCellsNextStage[cell] = true;
         }
     }
-    console.log('Current living cells -', livingCells);
-    console.log('Cells to check -', allCellsToCheck);
-    console.log('livingCellsNextStage', livingCellsNextStage)
 
+    game.steps++;
+    game.livingCells = livingCellsNextStage;
 
+    return responseSuccess({
+        livingCells: livingCellsNextStage,
+        steps: game.steps
+    })
+}
 
-    return responseSuccess({ livingCells: livingCellsNextStage })
+export const reset = async () => {
+    console.log(`Service - reset`);
+    const game = GameData.getInstance();
+
+    game.reset();
+
+    return responseSuccess({ ok: 1 })
 }

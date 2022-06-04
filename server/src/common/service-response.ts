@@ -3,6 +3,7 @@ interface IResponse {
     status?: number;
     data?: any;
 }
+
 export const responseWrapper = (status: number, data: unknown): IResponse => {
     const responseObject = {};
     responseObject['status'] = status;
