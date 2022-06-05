@@ -15,27 +15,29 @@ const Game = () => {
     const cells = useContext(CellContext);
     const [setps, setSteps] = useState(0);
     const [error, setError] = useState<IError | null>(null);
+    const [showAllDeadPopup, setShowAllDeadPopup] = useState(false)
 
     useEffect(() => {
         if (gameManagement.mode === 'running') {
             const interval = setInterval(() => {
-                if (gameManagement.afterFirstStep) {
-                    if (cells.livingCellsList) {
+                if (gameManagement.afterFirstStep && cells.livingCellsList) {
+                    if (Object.keys(cells.livingCellsList).length) {
                         onNext();
                     }
                 } else {
                     doFirstStep();
                 }
-            }, 300);
+            }, 100);
             return () => clearInterval(interval);
         }
     }, [api.game, cells.actions, cells.livingCellsList, gameManagement.actions, gameManagement.afterFirstStep, gameManagement.mode]);
 
     useEffect(() => {
-        if (gameManagement.mode === 'running' && cells.livingCellsList && !Object.keys(cells.livingCellsList).length) {
-            onAllDeadCells();
+        if (showAllDeadPopup) {
+            setShowAllDeadPopup(false)
+            alert('All life is dead');
         }
-    }, [cells.livingCellsList, gameManagement.actions, gameManagement.mode])
+    }, [showAllDeadPopup]);
 
     const onNextClicked = () => {
         if (gameManagement.afterFirstStep) {
@@ -103,7 +105,8 @@ const Game = () => {
 
     const onAllDeadCells = () => {
         onReset();
-        alert('All life is dead');
+        console.log('XXXXX');
+        setShowAllDeadPopup(true)
     }
 
 
