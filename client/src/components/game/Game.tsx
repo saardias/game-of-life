@@ -105,7 +105,6 @@ const Game = () => {
 
     const onAllDeadCells = () => {
         onReset();
-        console.log('XXXXX');
         setShowAllDeadPopup(true)
     }
 
